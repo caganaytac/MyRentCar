@@ -56,7 +56,7 @@ namespace ConsoleUI
 
         private static void CarTest3()
         {
-            CarManager carManager = new CarManager(new EfCarDal());
+            CarManager carManager = new CarManager(new EfCarDal(), new BrandManager(new EfBrandDal()));
             Console.WriteLine("----Car Details----\n");
             foreach (var car in carManager.GetCarsDetails().Data)
             {
@@ -66,7 +66,7 @@ namespace ConsoleUI
 
         private static void CarTest2()
         {
-            CarManager carManager = new CarManager(new EfCarDal());
+            CarManager carManager = new CarManager(new EfCarDal(), new BrandManager(new EfBrandDal()));
 
             foreach (var car in carManager.GetCarsByColorId(1).Data)
             {
@@ -76,7 +76,7 @@ namespace ConsoleUI
 
         private static void CarTest1()
         {
-            CarManager carManager = new CarManager(new EfCarDal());
+            CarManager carManager = new CarManager(new EfCarDal(), new BrandManager(new EfBrandDal()));
 
             foreach (var car in carManager.GetAll().Data)
             {
