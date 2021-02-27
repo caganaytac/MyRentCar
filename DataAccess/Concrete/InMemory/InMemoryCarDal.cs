@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Core.DataAccess;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
@@ -47,10 +48,7 @@ namespace DataAccess.Concrete
             throw new NotImplementedException();
         }
 
-        public void Add(Car car)
-        {
-            _cars.Add(car);
-        }
+
 
         public void Update(Car car)
         {
@@ -79,6 +77,11 @@ namespace DataAccess.Concrete
         public List<Car> GetById(int carId)
         {
             return _cars.Where(p => p.CarId == carId).ToList();
+        }
+
+        void IEntityRepository<Car>.Add(Car entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

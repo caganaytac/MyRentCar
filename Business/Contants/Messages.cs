@@ -38,6 +38,6 @@ namespace Business.Contants
         public static string CarImageAdded = "Car image added successfully!";
         public static string CarImageDeleted = "Car image updated successfully!";
         public static string CarImageUpdated = "Car image deleted successfully!";
-        public static string FailAddedImageLimit = "The number of images can be maximum of 5.";
+        public static string CarImageLimitExceeded = "Car Image count can't be more than 5.";
     }
 }
