@@ -5,6 +5,7 @@ using Business.Abstract;
 using Business.Contants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac;
+using Core.Entities.Concrete;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
@@ -29,10 +30,19 @@ namespace Business.Concrete
 
         public IDataResult<User> GetByUserId(int id)
         {
-            return new SuccessDataResult<User>(_userDal.Get(p => p.UserId == id));
+            return new SuccessDataResult<User>(_userDal.Get(p => p.Id == id));
         }
 
-        [ValidationAspect(typeof(UserValidation))]
+        public IDataResult<List<OperationClaim>> GetClaims(User user)
+        {
+            return new SuccessDataResult<List<OperationClaim>>(_userDal.GetClaims(user));
+        }
+
+        public IDataResult<User> GetByMail(string mail)
+        {
+           return new SuccessDataResult<User>(_userDal.Get(p => p.Email == mail));
+        }
+
         public IResult AddUser(User user)
         {
             _userDal.Add(user);

@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Contants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Transaction;
 using Core.Utilities.Business;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
@@ -26,21 +30,26 @@ namespace Business.Concrete
             _brandService = brandService;
         }
 
+        [CacheAspect]
+        [PerformanceAspect(5)]
         public IDataResult<List<Car>> GetAll()
         {
             return new SuccessDataResult<List<Car>>(_carDal.GetAll(), Messages.CarsListed);
         }
 
+        [CacheAspect]
         public IDataResult<Car> GetCarsByCarId(int id)
         {
             return new SuccessDataResult<Car>(_carDal.Get(p => p.CarId == id), "Found you choice car.");
         }
 
+        [CacheAspect]
         public IDataResult<List<Car>> GetCarsByBrandId(int id)
         {
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.BrandId == id).ToList(), true, "Got you choice brand cars.");
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.BrandId == id).ToList(), "Got you choice brand cars.");
         }
 
+        [CacheAspect]
         public IDataResult<List<Car>> GetCarsByColorId(int id)
         {
             return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.ColorId == id).ToList());
@@ -51,7 +60,22 @@ namespace Business.Concrete
             return new SuccessDataResult<List<CarDetailsDto>>(_carDal.GetCarDetails());
         }
 
+        [TransactionScopeAspect]
+        public IResult AddTransactionalTest(Car car)
+        {
+            AddCar(car);
+            if (car.DailyPrice < 10)
+            {
+                throw new Exception("");
+            }
+
+            AddCar(car);
+            return null;
+        }
+
+        [SecuredOperation("car.add,admin")]
         [ValidationAspect(typeof(CarValidation))]
+        [CacheRemoveAspect("ICarService.Get")]
         public IResult AddCar(Car car)
         {
             IResult result = BusinessRules.Run(CheckIfCarNameExists(car.CarName));
@@ -64,12 +88,17 @@ namespace Business.Concrete
 
         }
 
+        [SecuredOperation("car.update, admin")]
+        [ValidationAspect(typeof(CarValidation))]
+        [CacheRemoveAspect("ICarService.Get")]
         public IResult UpdateCar(Car car)
         {
             _carDal.Update(car);
             return new SuccessResult(Messages.CarUpdated);
         }
 
+        [SecuredOperation("car.delete, admin")]
+        [CacheRemoveAspect("ICarService.Get")]
         public IResult DeleteCar(Car car)
         {
             _carDal.Delete(car);

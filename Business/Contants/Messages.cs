@@ -39,5 +39,17 @@ namespace Business.Contants
         public static string CarImageDeleted = "Car image updated successfully!";
         public static string CarImageUpdated = "Car image deleted successfully!";
         public static string CarImageLimitExceeded = "Car Image count can't be more than 5.";
+
+        public static string UserNotFound = " User not found.";
+        public static string PasswordError = "Password is incorrect.";
+        public static string SuccessfulLogin = "Login was successfully.";
+        public static string UserAlreadyExists = "User is already exists.";
+        public static string UserRegistered = "User registered successfully.";
+        public static string AccessTokenCreated = "Access token generated successfully.";
+
+        public static string AuthorizationDenied = " You have not auth.";
+        public static string ProductNameAlreadyExists = "Product name is already exists";
+        public static string ProductCountErrorOfCategoryError = "You have exceeded the product limit in the relevant category.";
+        public static string CategoryLimitExceded = "Product couldn't add. Because category limit exceeded.";
     }
 }
