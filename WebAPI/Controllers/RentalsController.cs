@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Business.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -14,10 +15,11 @@ namespace WebAPI.Controllers
     public class RentalsController : ControllerBase
     {
         private IRentalService _rentalService;
-
-        public RentalsController(IRentalService rentalService)
+        private IPaymentService _paymentService;
+        public RentalsController(IRentalService rentalService, IPaymentService paymentService)
         {
             _rentalService = rentalService;
+            _paymentService = paymentService;
         }
         [HttpGet("getall")]
         public IActionResult GetAll()
@@ -43,6 +45,17 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getdetails")]
+        public IActionResult GetDetails()
+        {
+            var result = _rentalService.GetAllRentalsDto();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
 
         [HttpPost("add")]
         public IActionResult Add(Rental rental)
@@ -79,6 +92,29 @@ namespace WebAPI.Controllers
             }
 
             return BadRequest(result);
+        }
+
+        
+        [HttpPost("paymentadd")]
+        public ActionResult PaymentAdd(PaymentDto rentalPaymentDto)
+        {
+            var paymentResult = _paymentService.ReceivePayment(rentalPaymentDto.Payment);
+            if (!paymentResult.Success)
+            {
+                return BadRequest(paymentResult);
+            }
+            var result = _rentalService.AddRental(rentalPaymentDto.Rental);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+               
+            else
+            {
+                throw new System.Exception(result.Message);
+                //return BadRequest(result);                    
+            }
         }
     }
 }

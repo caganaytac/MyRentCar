@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Business.Abstract;
+using Business.Contants;
+using Core.Aspects.Autofac.Caching;
+using Core.Utilities.Business;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Business.Concrete
 {
@@ -18,7 +23,8 @@ namespace Business.Concrete
         {
             _rentalDal = rentalDal;
         }
-
+        
+        [CacheAspect]
         public IDataResult<List<Rental>> GetAll()
         {
             return new SuccessDataResult<List<Rental>>(_rentalDal.GetAll());
@@ -28,43 +34,75 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<RentalDetailsDto>>(_rentalDal.GetRentalDetails(x => x.CarId == carId));
         }
-
+        public IDataResult<List<RentalDetailsDto>> GetAllRentalsDto()
+        {
+            return new SuccessDataResult<List<RentalDetailsDto>>(_rentalDal.GetRentalDetails());
+        }
         public IDataResult<Rental> GetByRentalId(int id)
         {
             return new SuccessDataResult<Rental>(_rentalDal.Get(p => p.Id == id));
         }
 
+        [CacheRemoveAspect("IRentalService.Get")]
+        public IResult AddRental(Rental rental)
+        {
+            IResult result = BusinessRules.Run(WillLeasedCarAvailable(rental.CarId));
+            if (result != null)
+            {
+                return result;
+            }
+            _rentalDal.Add(rental);
+            return new SuccessResult(Messages.RentalAdded);
+        }
+
+        [CacheRemoveAspect("IRentalService.Get")]
+        public IResult UpdateRental(Rental rental)
+        {
+            IResult result = BusinessRules.Run(IsRentalExist(rental.CarId));
+            if (result != null)
+            {
+                return result;
+            }
+            _rentalDal.Update(rental);
+            return new SuccessResult(Messages.RentalUpdated);
+        }
+
+        [CacheRemoveAspect("IRentalService.Get")]
+        public IResult DeleteRental(Rental rental)
+        {
+            IResult result = BusinessRules.Run(IsRentalExist(rental.CarId));
+            if (result != null)
+            {
+                return result;
+            }
+            _rentalDal.Delete(rental);
+            return new SuccessResult(Messages.RentalDeleted);
+        }
+
         public IResult CheckReturnDate(int carId)
         {
             var result = _rentalDal.GetRentalDetails(p => p.CarId == carId && p.ReturnDate == null);
-            if (result.Count > 0 )
+            if (result.Count > 0)
             {
-                return new Results(false,"There is no Return Date.");
+                return new ErrorResult(Messages.CarCanNotBeRented);
             }
-            return new SuccessResult("Car returned.");
+            return new SuccessResult();
         }
-
-        public IResult AddRental(Rental rental)
+        private IResult WillLeasedCarAvailable(int carId)
         {
-            var result = CheckReturnDate(rental.CarId);
-            if (!result.Success)
+            if (_rentalDal.Get(p => p.CarId == carId && p.ReturnDate == null) != null)
+                return new ErrorResult(Messages.CarNotAvaible);
+            else
+                return new SuccessResult();
+        }
+        public IResult IsRentalExist(int carId)
+        {
+            var result = _rentalDal.GetRentalDetails(p => p.CarId == carId).Any();
+            if (!result)
             {
-                Console.WriteLine("Car could not add.");
+                return new ErrorResult(Messages.RentalIsNotExist);
             }
-            _rentalDal.Add(rental);
-            return new SuccessResult("Rental added successfully!");
-        }
-
-        public IResult UpdateRental(Rental rental)
-        {
-            _rentalDal.Update(rental);
-            return new SuccessResult("Rental updated successfully!");
-        }
-
-        public IResult DeleteRental(Rental rental)
-        {
-            _rentalDal.Delete(rental);
-            return new SuccessResult("Rental deleted successfully!");
+            return new SuccessResult();
         }
     }
 }

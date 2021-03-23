@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using Business.Abstract;
 using Business.Contants;
+using Core.Aspects.Autofac.Caching;
 using Core.Utilities.Business;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using Entities.Concrete;
 using DataAccess.Abstract;
+using Entities.DTOs;
 
 namespace Business.Concrete
 {
@@ -21,16 +23,25 @@ namespace Business.Concrete
             _userService = userService;
         }
 
+        [CacheAspect]
         public IDataResult<List<Customer>> GetAll()
         {
            return new SuccessDataResult<List<Customer>>(_customerDal.GetAll());
         }
 
+        [CacheAspect]
+        public IDataResult<List<CustomerDetailsDto>> GetAllCustomerDetails()
+        {
+            return new SuccessDataResult<List<CustomerDetailsDto>>(_customerDal.GetCustomerDetails());
+        }
+
+        [CacheAspect]
         public IDataResult<Customer> GetByCustomerId(int id)
         {
             return new SuccessDataResult<Customer>(_customerDal.Get(p =>p.UserId == id));
         }
-
+        
+        [CacheRemoveAspect("ICustomerService.Get")]
         public IResult AddCustomer(Customer customer)
         {
             IResult result = BusinessRules.Run(CheckIfTheCustomerIsAUser(customer.UserId));
@@ -42,6 +53,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.CustomerAdded);
         }
 
+        [CacheRemoveAspect("ICustomerService.Get")]
         public IResult UpdateCustomer(Customer customer)
         {
             _customerDal.Update(customer);
@@ -49,6 +61,7 @@ namespace Business.Concrete
 
         }
 
+        [CacheRemoveAspect("ICustomerService.Get")]
         public IResult DeleteCustomer(Customer customer)
         {
             _customerDal.Delete(customer);

@@ -51,5 +51,14 @@ namespace Business.Contants
         public static string ProductNameAlreadyExists = "Product name is already exists";
         public static string ProductCountErrorOfCategoryError = "You have exceeded the product limit in the relevant category.";
         public static string CategoryLimitExceded = "Product couldn't add. Because category limit exceeded.";
+
+        public static string CarCanNotBeRented = "Car can't be rented.";
+        public static string RentalAdded = "Rental added successfully.";
+        public static string RentalUpdated = "Rental updated successfully.";
+        public static string RentalDeleted = "Rental deleted successfully.";
+        public static string RentalIsNotExist = "Rental is not exist.";
+        public static string CarNotAvaible ="Car not avaible for rent.";
+        public static string PaymentCompleted = "Payment completed.";
+        public static string InsufficientBalance = "Insufficient balance.";
     }
 }

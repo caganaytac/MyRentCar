@@ -17,7 +17,7 @@ namespace DataAccess.Concrete.EntityFramework
         {
             using (CarBaseContext context = new CarBaseContext())
             {
-                var result = from re in filter is null ? context.Rentals : context.Rentals.Where(filter)
+                var result = from re in context.Rentals
                              join ca in context.Cars on re.CarId equals ca.CarId
                              join cus in context.Customers on re.CustomerId equals cus.CustomerId
                              join u in context.Users on cus.UserId equals u.Id
@@ -31,7 +31,13 @@ namespace DataAccess.Concrete.EntityFramework
                                  RenterName = u.FirstName,
                                  RenterSurname = u.LastName,
                                  RentDate = re.RentDate,
-                                 ReturnDate = re.ReturnDate
+                                 ReturnDate = re.ReturnDate,
+                                 RentalId = re.Id,
+                                 CustomerId = re.CustomerId,
+                                 CarId = re.CarId,
+                                 ModelYear = ca.ModelYear,
+                                 DailyPrice = ca.DailyPrice,
+                                 CarDescription = ca.Description
                              };
                 return result.ToList();
             }
