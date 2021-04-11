@@ -29,11 +29,11 @@ namespace Business.Concrete
         private readonly ICarDal _carDal;
         private readonly ICarImageService _carImageService;
         private readonly IRentalService _rentalService;
-        public CarManager(ICarDal carDal, ICarImageService carImageService, IRentalService rentalService)
+        public CarManager(ICarDal carDal, ICarImageService carImageService)
         {
             _carDal = carDal;
             _carImageService = carImageService;
-            _rentalService = rentalService;
+
         }
 
         [CacheAspect(duration: 10)]
