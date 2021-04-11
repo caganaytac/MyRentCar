@@ -14,7 +14,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class RentalsController : ControllerBase
     {
-        private IRentalService _rentalService;
+        private readonly IRentalService _rentalService;
         private IPaymentService _paymentService;
         public RentalsController(IRentalService rentalService, IPaymentService paymentService)
         {
@@ -27,7 +27,7 @@ namespace WebAPI.Controllers
             var result = _rentalService.GetAll();
             if (result.Success)
             {
-                return Ok(result.Data);
+                return Ok(result);
             }
 
             return BadRequest(result);
@@ -58,9 +58,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult Add(Rental rental)
+        public IActionResult Add(PaymentDto paymentDto)
         {
-            var result = _rentalService.AddRental(rental);
+            var result = _rentalService.AddRental(paymentDto.Rental, paymentDto.Payment);
             if (result.Success)
             {
                 return Ok(result);
@@ -94,27 +94,23 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        
-        [HttpPost("paymentadd")]
-        public ActionResult PaymentAdd(PaymentDto rentalPaymentDto)
-        {
-            var paymentResult = _paymentService.ReceivePayment(rentalPaymentDto.Payment);
-            if (!paymentResult.Success)
-            {
-                return BadRequest(paymentResult);
-            }
-            var result = _rentalService.AddRental(rentalPaymentDto.Rental);
 
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-               
-            else
-            {
-                throw new System.Exception(result.Message);
-                //return BadRequest(result);                    
-            }
-        }
+        //[HttpPost("paymentadd")]
+        //public ActionResult PaymentAdd(PaymentDto rentalPaymentDto)
+        //{
+        //    var paymentResult = _paymentService.Add(rentalPaymentDto.Payment);
+        //    if (paymentResult.Success)
+        //    {
+        //        var result = _rentalService.AddRental(rentalPaymentDto.Rental);
+
+        //        if (result.Success)
+        //        {
+        //            return Ok(result);
+        //        }
+        //        return BadRequest(result.Message);
+        //    }
+        //    return BadRequest(paymentResult);
+
+        //}
     }
 }

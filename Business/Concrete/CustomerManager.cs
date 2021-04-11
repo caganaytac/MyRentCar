@@ -15,8 +15,8 @@ namespace Business.Concrete
 {
     public class CustomerManager : ICustomerService
     {
-        private ICustomerDal _customerDal;
-        private IUserService _userService;
+        private readonly ICustomerDal _customerDal;
+        private readonly IUserService _userService;
         public CustomerManager(ICustomerDal customerDal, IUserService userService)
         {
             _customerDal = customerDal;
@@ -36,11 +36,23 @@ namespace Business.Concrete
         }
 
         [CacheAspect]
+        public IDataResult<CustomerDetailsDto> GetDetailsByCustomerId(int id)
+        {
+            return new SuccessDataResult<CustomerDetailsDto>(_customerDal.GetCustomerDetails(p=> p.CustomerId == id)[0]);
+        }
+
+        [CacheAspect]
         public IDataResult<Customer> GetByCustomerId(int id)
         {
-            return new SuccessDataResult<Customer>(_customerDal.Get(p =>p.UserId == id));
+            return new SuccessDataResult<Customer>(_customerDal.Get(p =>p.CustomerId == id));
         }
-        
+
+        [CacheAspect]
+        public IDataResult<Customer> GetByUserId(int id)
+        {
+            return new SuccessDataResult<Customer>(_customerDal.Get(p => p.UserId == id));
+        }
+
         [CacheRemoveAspect("ICustomerService.Get")]
         public IResult AddCustomer(Customer customer)
         {
@@ -68,6 +80,8 @@ namespace Business.Concrete
             return new SuccessResult(Messages.CustomerDeleted);
 
         }
+
+        //Business Codes
         
         private IResult CheckIfTheCustomerIsAUser(int id)
         {

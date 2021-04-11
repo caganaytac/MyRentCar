@@ -40,7 +40,7 @@ namespace Core.Utilities.Helpers
                 }
             }
             File.Delete(sourcePath);
-            return result.path2.Replace(@"\\","/");
+            return result.path2.Replace(@"\\", "/");
         }
 
         public static (string newPath, string path2) NewPath(IFormFile file)
@@ -50,12 +50,11 @@ namespace Core.Utilities.Helpers
 
 
             string path = Environment.CurrentDirectory + @"\wwwroot\CarImages";
-            var newPath = Guid.NewGuid() +"_"+DateTime.Now.Month+"_"+DateTime.Now.Day+"_"+DateTime.Now.Year + fileExtension;
+            var newPath = Guid.NewGuid() + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + "_" + DateTime.Now.Year + fileExtension;
 
             string result = $@"{path}\{newPath}";
 
-            return (result,$@"{newPath}");
+            return (result, $@"{newPath}");
         }
     }
 }
- 

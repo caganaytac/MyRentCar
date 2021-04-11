@@ -18,19 +18,25 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace Business.Concrete
 {
     public class CarManager : ICarService
     {
-        private ICarDal _carDal;
-        public CarManager(ICarDal carDal, ICarImageService carImageService)
+        private readonly ICarDal _carDal;
+        private readonly ICarImageService _carImageService;
+        private readonly IRentalService _rentalService;
+        public CarManager(ICarDal carDal, ICarImageService carImageService, IRentalService rentalService)
         {
             _carDal = carDal;
+            _carImageService = carImageService;
+            _rentalService = rentalService;
         }
 
-        [CacheAspect]
-        //[PerformanceAspect(5)]
+        [CacheAspect(duration: 10)]
         public IDataResult<List<Car>> GetAll()
         {
             return new SuccessDataResult<List<Car>>(_carDal.GetAll(), Messages.CarsListed);
@@ -39,13 +45,13 @@ namespace Business.Concrete
         [CacheAspect]
         public IDataResult<Car> GetCarsByCarId(int id)
         {
-            return new SuccessDataResult<Car>(_carDal.Get(p => p.CarId == id), "Found you choice car.");
+            return new SuccessDataResult<Car>(_carDal.Get(p => p.CarId == id));
         }
 
         [CacheAspect]
         public IDataResult<List<Car>> GetCarsByBrandId(int id)
         {
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.BrandId == id).ToList(), "Got you choice brand cars.");
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.BrandId == id).ToList());
         }
 
         [CacheAspect]
@@ -54,92 +60,100 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.ColorId == colorId).ToList());
         }
 
+        [CacheAspect]
         public IDataResult<List<CarDetailsDto>> GetCarsDetailsByColorId(int id)
         {
             return new SuccessDataResult<List<CarDetailsDto>>(_carDal.GetCarDetails(p => p.ColorId == id));
         }
 
 
-
+        [CacheAspect]
         public IDataResult<List<CarDetailsDto>> GetCarsDetails()
         {
-
             return new SuccessDataResult<List<CarDetailsDto>>(_carDal.GetCarDetails());
         }
 
+        [CacheAspect]
         public IDataResult<CarDetailsDto> GetCarsDetailsByCarId(int carId)
         {
-            return new SuccessDataResult<CarDetailsDto>(_carDal.GetCarDetails(p => p.CarId == carId)[0]);
+            return new SuccessDataResult<CarDetailsDto>(_carDal.GetCarDetail(p => p.CarId == carId));
         }
 
+        [CacheAspect]
         public IDataResult<List<CarDetailsDto>> GetCarsDetailsByBrandId(int brandId)
         {
             return new SuccessDataResult<List<CarDetailsDto>>(_carDal.GetCarDetails(p => p.BrandId == brandId));
         }
 
+        [CacheAspect]
         public IDataResult<List<CarDetailsDto>> GetCarsDetailsByBrandIdAndColorId(int brandId, int colorId)
         {
             return new SuccessDataResult<List<CarDetailsDto>>(_carDal.GetCarDetails(p=> p.BrandId == brandId && p.ColorId == colorId));
         }
 
         [TransactionScopeAspect]
-        public IResult AddTransactionalTest(Car car)
+        public IResult AddTransactionalTest(Car car, IFormFile image)
         {
-            AddCar(car);
+            AddCar(car, image);
             if (car.DailyPrice < 10)
             {
                 throw new Exception("");
             }
 
-            AddCar(car);
+            AddCar(car, image);
             return null;
         }
 
         [SecuredOperation("car.add,admin")]
-        [ValidationAspect(typeof(CarValidation))]
+        [ValidationAspect(typeof(CarValidator))]
         [CacheRemoveAspect("ICarService.Get")]
-        public IResult AddCar(Car car)
+        public IResult AddCar(Car car, IFormFile image)
         {
-            IResult result = BusinessRules.Run(CheckIfCarNameExists(car.CarName));
-            if (result != null)
-            {
-                return result;
-            }
+
             _carDal.Add(car);
+            _carImageService.Add(image, new CarImage() { CarId = car.CarId });
             return new SuccessResult(Messages.CarAdded);
 
         }
 
-        [SecuredOperation("car.update, admin")]
-        [ValidationAspect(typeof(CarValidation))]
+        [SecuredOperation("car.update,admin")]
+        [ValidationAspect(typeof(CarValidator))]
         [CacheRemoveAspect("ICarService.Get")]
-        public IResult UpdateCar(Car car)
+        public IResult UpdateCarWithOutImage(Car car)
         {
             _carDal.Update(car);
             return new SuccessResult(Messages.CarUpdated);
         }
 
-        [SecuredOperation("car.delete, admin")]
+        [SecuredOperation("car.update,admin")]
+        [ValidationAspect(typeof(CarValidator))]
+        [CacheRemoveAspect("ICarService.Get")]
+        public IResult UpdateCar(Car car, IFormFile image)
+        {
+            var carImages = _carImageService.GetAllByCarId(car.CarId).Data;
+
+            foreach(var carImage in carImages)
+            {
+                _carImageService.Update(image, carImage);
+            }
+
+            _carDal.Update(car);
+            return new SuccessResult(Messages.CarUpdated);
+        }
+
+        [SecuredOperation("car.delete,admin")]
         [CacheRemoveAspect("ICarService.Get")]
         public IResult DeleteCar(Car car)
         {
-            _carDal.Delete(car);
-            return new SuccessResult("Car deleted!");
-
-        }
-
-  
-
-        private IResult CheckIfCarNameExists(string carName)
-        {
-            var result = _carDal.GetAll(p => p.CarName == carName).Any();
-            if (result)
+            var carImage = _carImageService.GetByCarId(car.CarId).Data;
+            if (carImage != null)
             {
-                return new ErrorResult(Messages.CarNameAlreadyExists);
+                _carImageService.Delete(carImage);
             }
+            
+            _carDal.Delete(car);
+            return new SuccessResult(Messages.CarDeleted);
 
-            return new SuccessResult();
         }
-
     }
 }

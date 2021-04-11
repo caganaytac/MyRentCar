@@ -14,7 +14,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private IUserService _userService;
+        private readonly IUserService _userService;
 
         public UsersController(IUserService userService)
         {
@@ -61,6 +61,18 @@ namespace WebAPI.Controllers
         public IActionResult Update(User user)
         {
             var result = _userService.UpdateUser(user);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
+        [HttpPost("update-infos")]
+        public IActionResult UpdateUserInfos(User user)
+        {
+            var result = _userService.UpdateUserInfos(user);
             if (result.Success)
             {
                 return Ok(result);

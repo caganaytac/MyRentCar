@@ -16,7 +16,7 @@ namespace Business.Concrete
 {
     public class UserManager : IUserService
     {
-        private IUserDal _userDal;
+        private readonly IUserDal _userDal;
 
         public UserManager(IUserDal userDal)
         {
@@ -53,6 +53,17 @@ namespace Business.Concrete
         public IResult UpdateUser(User user)
         {
             _userDal.Update(user);
+            return new SuccessResult("User updated successfully.");
+        }
+
+        [ValidationAspect(typeof(UserInfosValidator))]
+        public IResult UpdateUserInfos(User user)
+        {
+            var userToUpdate = GetByUserId(user.Id).Data;
+            userToUpdate.FirstName = user.FirstName;
+            userToUpdate.LastName = user.LastName;
+            userToUpdate.Email = user.Email;
+            UpdateUser(userToUpdate);
             return new SuccessResult("User updated successfully.");
         }
 

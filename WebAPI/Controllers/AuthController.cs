@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Business.Abstract;
+using Entities.Concrete;
 using Entities.DTOs;
 
 namespace WebAPI.Controllers
@@ -13,7 +14,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private IAuthService _authService;
+        private readonly IAuthService _authService;
 
         public AuthController(IAuthService authService)
         {
@@ -32,7 +33,7 @@ namespace WebAPI.Controllers
             var result = _authService.CreateAccessToken(userToLogin.Data);
             if (result.Success)
             {
-                return Ok(result.Data);
+                return Ok(result);
             }
 
             return BadRequest(result.Message);
@@ -48,11 +49,25 @@ namespace WebAPI.Controllers
                 return BadRequest(userExists.Message);
             }
 
-            var registerResult = _authService.Register(userForRegisterDto, userForRegisterDto.Password);
+            var registerResult = _authService.Register(userForRegisterDto);
             var result = _authService.CreateAccessToken(registerResult.Data);
             if (result.Success)
             {
-                return Ok(result.Data);
+                return Ok(result);
+            }
+
+            return BadRequest(result.Message);
+
+        }
+
+        [HttpPost("change-password")]
+        public ActionResult ChangePassword(UserChangePasswordDto userChangePasswordDto)
+        {
+
+            var result = _authService.ChangePassword(userChangePasswordDto);
+            if (result.Success)
+            {
+                return Ok(result);
             }
 
             return BadRequest(result.Message);

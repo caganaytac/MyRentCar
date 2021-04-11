@@ -41,6 +41,21 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<AuthManager>().As<IAuthService>().SingleInstance();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>().SingleInstance();
 
+            builder.RegisterType<CreditCardManager>().As<ICreditCardService>().SingleInstance();
+            builder.RegisterType<EfCreditCardDal>().As<ICreditCardDal>().SingleInstance();
+
+            builder.RegisterType<UserProfilePhotoManager>().As<IUserProfilePhotoService>().SingleInstance();
+            builder.RegisterType<EfUserProfilePhotoDal>().As<IUserProfilePhotoDal>().SingleInstance();
+
+            builder.RegisterType<EfUserCreditScoreDal>().As<IUserCreditScoreDal>().SingleInstance();
+            builder.RegisterType<UserCreditScoreManager>().As<IUserCreditScoreService>().SingleInstance();
+
+            builder.RegisterType<EfOperationClaimDal>().As<IOperationClaimDal>().SingleInstance();
+            builder.RegisterType<OperationClaimManager>().As<IOperationClaimService>().SingleInstance();
+
+            builder.RegisterType<EfUserOperationClaimDal>().As<IUserOperationClaimDal>().SingleInstance();
+            builder.RegisterType<UserOperationClaimManager>().As<IUserOperationClaimService>().SingleInstance();
+
             builder.RegisterType<PaymentManager>().As<IPaymentService>().SingleInstance();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();

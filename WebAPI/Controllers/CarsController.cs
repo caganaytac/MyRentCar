@@ -13,7 +13,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class CarsController : ControllerBase
     {
-        private ICarService _carService;
+        private readonly ICarService _carService;
 
         public CarsController(ICarService carService)
         {
@@ -127,9 +127,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult Add(Car car)
+        public IActionResult Add([FromForm] Car car,[FromForm] IFormFile image)
         {
-            var result = _carService.AddCar(car);
+            var result = _carService.AddCar(car, image);
             if (result.Success)
             {
                 return Ok(result);
@@ -140,9 +140,19 @@ namespace WebAPI.Controllers
 
 
         [HttpPost("update")]
-        public IActionResult Update(Car car)
+        public IActionResult Update([FromForm] Car car, [FromForm] IFormFile image)
         {
-            var result = _carService.UpdateCar(car);
+            if (image == null)
+            {
+                var result2 = _carService.UpdateCarWithOutImage(car);
+                if (result2.Success)
+                {
+                    return Ok(result2);
+                }
+
+                return BadRequest(result2);
+            }
+            var result = _carService.UpdateCar(car, image);
             if (result.Success)
             {
                 return Ok(result);

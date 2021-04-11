@@ -11,7 +11,7 @@ namespace Business.Concrete
 {
    public class PaymentManager : IPaymentService
    {
-        public IResult ReceivePayment(Payment payment)
+        public IResult Add(Payment payment)
         {
             return new SuccessResult(Messages.PaymentCompleted);
         }
