@@ -1,5 +1,4 @@
-[![LinkedIn][linkedin-shield]][linkedin-url]
-    <br />
+
   <h2 align="center">MyRentCar</h2>
   <p align="center">
     Car Rental project with N-Layer Architecture.
@@ -18,8 +17,3 @@
 [![Autofac](https://img.shields.io/badge/Autofac-004880?style=for-the-badge&logo=nuget&logoColor=white)](https://autofac.org/)
 [![Fluent-Validation](https://img.shields.io/badge/Fluent%20Validation-004880?style=for-the-badge&logo=nuget&logoColor=white)](https://fluentvalidation.net/)
 
-
-
-
-[linkedin-shield]: https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
-[linkedin-url]: https://linkedin.com/in/caganaytac
