@@ -8,7 +8,6 @@ namespace Core.Utilities.Results.Abstract
     {
         public Results(bool success, string message) : this(success)
         {
-            
             Message = message;
         }
         public Results(bool success)

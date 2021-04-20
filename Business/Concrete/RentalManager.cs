@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Business.Abstract;
-using Business.Contants;
+using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac;
 using Core.Aspects.Autofac.Caching;
@@ -73,6 +73,7 @@ namespace Business.Concrete
 
             var customer = _customerService.GetByCustomerId(rental.CustomerId).Data;
             var userCreditScore = _userCreditScoreService.GetByUserId(customer.UserId).Data;
+
             userCreditScore.CreditScore += 50;
             if (userCreditScore.CreditScore > 1999)
             {

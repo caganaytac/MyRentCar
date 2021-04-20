@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Business.Contants;
+using Business.Constants;
 using Core.Entities.Concrete;
 using FluentValidation;
 

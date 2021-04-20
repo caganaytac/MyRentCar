@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Business.Abstract;
-using Business.Contants;
+using Business.Constants;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using Entities.Concrete;

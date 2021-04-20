@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using Business.Abstract;
-using Business.Contants;
+using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac;
 using Core.Aspects.Autofac.Caching;
@@ -14,7 +12,6 @@ using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Business.Concrete
 {
@@ -40,22 +37,13 @@ namespace Business.Concrete
         public IDataResult<List<CarImage>> GetAllByCarId(int carId)
         {
             var result = _carImageDal.GetAll(p => p.CarId == carId);
-            if (result.Count > 0)
-            {
-                return new SuccessDataResult<List<CarImage>>(result);
-            }
-
-            List<CarImage> images = new List<CarImage>();
-            images.Add(new CarImage { Id = 0, CarId = 0, ImagePath = "/CarImages/images.png" });
-
-            return new SuccessDataResult<List<CarImage>>(images);
+            return new SuccessDataResult<List<CarImage>>(result);
         }
 
         public IDataResult<CarImage> GetByCarId(int carId)
         {
             var result = _carImageDal.Get(p => p.CarId == carId);
             return new SuccessDataResult<CarImage>(result);
-
         }
 
         [ValidationAspect(typeof(CarImageValidator))]
@@ -103,23 +91,5 @@ namespace Business.Concrete
 
             return new SuccessResult();
         }
-
-        //private IDataResult<List<CarImage>> CheckIfCarImageNull(int id)
-        //{
-        //    string path = @"\images.png";
-        //    var result = _carImageDal.GetAll(c => c.CarId == id).Any();
-
-        //    if (!result)
-        //    {
-        //        List<CarImage> carImage = new List<CarImage>();
-
-        //        carImage.Add(new CarImage { CarId = id, ImagePath = path, Date = DateTime.UtcNow });
-
-        //      return new SuccessDataResult<List<CarImage>>(carImage.FindAll(c => c.CarId == id)); 
-        //    }
-
-        //    return new SuccessDataResult<List<CarImage>>();
-
-        //}
     }
 }

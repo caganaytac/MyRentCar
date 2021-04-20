@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Business.Abstract;
-using Business.Contants;
+using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac;
 using Core.Entities.Concrete;

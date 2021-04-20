@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Business.Contants
+﻿namespace Business.Constants
 {
     public static class Messages
     {
@@ -12,7 +8,6 @@ namespace Business.Contants
         public static string DailyPriceCanNot0 = "Daily Price must greater than 0.";
         public static string MinCarName = "Car name contains 2-10 characters.";
         public static string CarsListed = "Cars listed!";
-        public static string CarNameAlreadyExists = "The car cannot added because the car name already exists.";
 
         public static string BrandAdded = "Brand added successfully!";
         public static string BrandUpdated = "Brand updated successfully!";
@@ -25,7 +20,6 @@ namespace Business.Contants
         public static string ColorAdded = "Color added successfully!";
         public static string ColorUpdated = "Color updated successfully!";
         public static string ColorDeleted = "Color deleted successfully!";
-        public static string ColorCountLimitExceeded = "The limit on the number of colors has been exceeded, so no colors can be added.";
         public static string ColorNameAlreadyExists = "The color cannot added because the color name already exists.";
         public static string ColorNameNotEmpty = "Color name can't be empty.";
         public static string ColorLengthMin2 = "Color name must contains minimum 2 characters.";
@@ -34,17 +28,12 @@ namespace Business.Contants
         public static string CustomerUpdated = "Customer updated successfully!";
         public static string CustomerDeleted = "Customer updated successfully!";
         public static string CustomerIsNotUser = "Customer must be a user.";
-        public static string CarIsNotExists = "Car is not exists.";
 
-        public static string IncorrectFileExtensions = "Unacceptable file extension.";
-        public static string CarImageAdded = "Car image added successfully!";
-        public static string CarImageDeleted = "Car image updated successfully!";
-        public static string CarImageUpdated = "Car image deleted successfully!";
         public static string CarImageLimitExceeded = "Car Image count can't be more than 5.";
 
         public static string UserNotFound = " User not found.";
         public static string PasswordError = "Password is incorrect.";
-        public static string SuccessfullLogin = "Login was successfully.";
+        public static string SuccessfullLogin = "Logged in successfully.";
         public static string UserAlreadyExists = "User is already exists.";
         public static string UserRegistered = "User registered successfully.";
         public static string AccessTokenCreated = "Logged in successfully.";
@@ -55,7 +44,6 @@ namespace Business.Contants
         public static string AuthorizationDenied = " You have not auth.";
 
 
-        public static string CarCanNotBeRented = "Car can't be rented.";
         public static string RentalAdded = "Rental added successfully.";
         public static string RentalUpdated = "Rental updated successfully.";
         public static string RentalDeleted = "Rental deleted successfully.";

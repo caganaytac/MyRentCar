@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Business.Abstract;
-using Business.Contants;
+using Business.Constants;
 using Core.Aspects.Autofac.Caching;
 using Core.Utilities.Business;
 using Core.Utilities.Results.Abstract;

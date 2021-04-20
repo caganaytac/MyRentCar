@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Business.Abstract;
 using Business.BusinessAspects.Autofac;
-using Business.Contants;
+using Business.Constants;
 using Core.Entities.Concrete;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;

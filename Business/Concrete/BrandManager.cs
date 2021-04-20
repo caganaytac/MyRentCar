@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Business.Abstract;
 using Business.BusinessAspects.Autofac;
-using Business.Contants;
+using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac;
 using Core.Aspects.Autofac.Caching;

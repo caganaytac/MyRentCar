@@ -1,26 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Business.Abstract;
 using Business.BusinessAspects.Autofac;
-using Business.Contants;
+using Business.Constants;
 using Business.ValidationRules.FluentValidation;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using Core.Aspects.Autofac;
 using Core.Aspects.Autofac.Caching;
-using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Transaction;
-using Core.Utilities.Business;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
-using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+
 
 namespace Business.Concrete
 {
@@ -28,7 +22,6 @@ namespace Business.Concrete
     {
         private readonly ICarDal _carDal;
         private readonly ICarImageService _carImageService;
-        private readonly IRentalService _rentalService;
         public CarManager(ICarDal carDal, ICarImageService carImageService)
         {
             _carDal = carDal;
@@ -36,7 +29,7 @@ namespace Business.Concrete
 
         }
 
-        [CacheAspect(duration: 10)]
+        [CacheAspect]
         public IDataResult<List<Car>> GetAll()
         {
             return new SuccessDataResult<List<Car>>(_carDal.GetAll(), Messages.CarsListed);
@@ -65,8 +58,7 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<CarDetailsDto>>(_carDal.GetCarDetails(p => p.ColorId == id));
         }
-
-
+        
         [CacheAspect]
         public IDataResult<List<CarDetailsDto>> GetCarsDetails()
         {
@@ -111,7 +103,7 @@ namespace Business.Concrete
         {
 
             _carDal.Add(car);
-            _carImageService.Add(image, new CarImage() { CarId = car.CarId });
+            _carImageService.Add(image, new CarImage { CarId = car.CarId });
             return new SuccessResult(Messages.CarAdded);
 
         }
