@@ -7,7 +7,6 @@ using Core.DataAccess.EntityFramework;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
-using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Concrete.EntityFramework
 {

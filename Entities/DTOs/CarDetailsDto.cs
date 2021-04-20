@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Text;
+﻿
 using Core.Entities;
-using Entities.Concrete;
+
 
 namespace Entities.DTOs
 {

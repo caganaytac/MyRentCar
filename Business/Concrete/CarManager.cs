@@ -124,7 +124,7 @@ namespace Business.Concrete
         {
             var carImages = _carImageService.GetAllByCarId(car.CarId).Data;
 
-            foreach(var carImage in carImages)
+            foreach (var carImage in carImages)
             {
                 _carImageService.Update(image, carImage);
             }

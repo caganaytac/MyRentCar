@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Business.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -67,6 +68,7 @@ namespace WebAPI.Controllers
 
             return BadRequest(result);
         }
+
         [HttpGet("getdetailsbybrandid")]
         public IActionResult GetDetailsByBrandId(int brandId)
         {
@@ -102,6 +104,7 @@ namespace WebAPI.Controllers
 
             return BadRequest(result);
         }
+
         [HttpGet("getdetailsbybrandid-and-colorid")]
         public IActionResult GetCarDetailsByBrandIdAndColorId(int brandId, int colorId)
         {
@@ -127,7 +130,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult Add([FromForm] Car car,[FromForm] IFormFile image)
+        public IActionResult Add([FromForm] Car car, [FromForm] IFormFile image)
         {
             var result = _carService.AddCar(car, image);
             if (result.Success)
@@ -137,7 +140,6 @@ namespace WebAPI.Controllers
 
             return BadRequest(result);
         }
-
 
         [HttpPost("update")]
         public IActionResult Update([FromForm] Car car, [FromForm] IFormFile image)
