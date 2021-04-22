@@ -79,7 +79,7 @@ namespace Business.Concrete
                 return new ErrorDataResult<User>(Messages.UserNotFound);
             }
 
-            IDataResult<User> result = BusinessRules.Run<User>(VerifyPasswordHashing(userForLoginDto.Password,
+            IDataResult<User> result = BusinessRules.Run(VerifyPasswordHashing(userForLoginDto.Password,
                 userToCheck.PasswordHash, userToCheck.PasswordSalt));
             if (result != null)
             {
@@ -97,7 +97,7 @@ namespace Business.Concrete
                 return new ErrorResult(Messages.UserNotFound);
             }
 
-            IDataResult<User> result = BusinessRules.Run<User>(VerifyPasswordHashing(userChangePasswordDto.OldPassword,
+            IDataResult<User> result = BusinessRules.Run(VerifyPasswordHashing(userChangePasswordDto.OldPassword,
                 userToCheck.PasswordHash, userToCheck.PasswordSalt));
 
             if (result != null)
