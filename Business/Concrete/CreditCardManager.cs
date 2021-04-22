@@ -41,7 +41,7 @@ namespace Business.Concrete
         [CacheAspect]
         public IDataResult<List<CreditCard>> GetByUserId(int id)
         {
-            IDataResult<List<CreditCard>> result = BusinessRules.Run<List<CreditCard>>(IsUserExists(id));
+            IDataResult<List<CreditCard>> result = BusinessRules.Run(IsUserExists(id));
             if (result != null)
             {
                 return result;
@@ -84,13 +84,13 @@ namespace Business.Concrete
 
         //Business Codes
 
-        private IResult IsUserExists(int id)
+        private IDataResult<List<CreditCard>> IsUserExists(int id)
         {
             if (_userService.GetByUserId(id).Data == null)
             {
-                return new ErrorResult(Messages.UserNotFound);
+                return new ErrorDataResult<List<CreditCard>>(Messages.UserNotFound);
             }
-            return new SuccessResult();
+            return new SuccessDataResult<List<CreditCard>>();
         }
     }
 }

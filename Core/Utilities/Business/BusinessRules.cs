@@ -19,13 +19,13 @@ namespace Core.Utilities.Business
             return null;
         }
 
-        public static IDataResult<T> Run<T>(params IResult[] logics)
+        public static IDataResult<T> Run<T>(params IDataResult<T>[] logics)
         {
             foreach (var result in logics)
             {
                 if (!result.Success)
                 {
-                    return (IDataResult<T>)result;
+                    return result;
                 }
             }
             return null;
