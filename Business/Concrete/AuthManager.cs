@@ -6,6 +6,7 @@ using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac;
 using Core.Entities.Concrete;
+using Core.Utilities.Business;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using Core.Utilities.Security.Hashing;
@@ -23,7 +24,11 @@ namespace Business.Concrete
         private readonly ICustomerService _customerService;
         private readonly IUserOperationClaimService _userOperationClaimService;
 
-        public AuthManager(IUserService userService, ITokenHelper tokenHelper, IUserCreditScoreService userCreditScoreService, ICustomerService customerService, IUserOperationClaimService userOperationClaimService)
+        public AuthManager(IUserService userService,
+            ITokenHelper tokenHelper,
+            IUserCreditScoreService userCreditScoreService,
+            ICustomerService customerService,
+            IUserOperationClaimService userOperationClaimService)
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
@@ -35,6 +40,11 @@ namespace Business.Concrete
         [ValidationAspect(typeof(UserForRegisterValidator))]
         public IDataResult<User> Register(UserForRegisterDto userForRegisterDto)
         {
+            if (_userService.GetByMail(userForRegisterDto.Email).Data != null)
+            {
+                return new ErrorDataResult<User>(Messages.UserAlreadyExists);
+            }
+
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(userForRegisterDto.Password, out passwordHash, out passwordSalt);
 
@@ -63,45 +73,46 @@ namespace Business.Concrete
         [ValidationAspect(typeof(UserForLoginValidator))]
         public IDataResult<User> Login(UserForLoginDto userForLoginDto)
         {
-            var userToCheck = _userService.GetByMail(userForLoginDto.Email);
-            if (userToCheck.Data == null)
+            var userToCheck = _userService.GetByMail(userForLoginDto.Email).Data;
+            if (userToCheck == null)
             {
                 return new ErrorDataResult<User>(Messages.UserNotFound);
             }
 
-            if (!HashingHelper.VerifyPasswordHashing(userForLoginDto.Password, userToCheck.Data.PasswordHash, userToCheck.Data.PasswordSalt))
+            IDataResult<User> result = BusinessRules.Run<User>(VerifyPasswordHashing(userForLoginDto.Password,
+                userToCheck.PasswordHash, userToCheck.PasswordSalt));
+            if (result != null)
             {
-                return new ErrorDataResult<User>(Messages.PasswordError);
+                return result;
             }
-            return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessfullLogin);
+
+            return new SuccessDataResult<User>(userToCheck, Messages.SuccessfullLogin);
         }
 
         public IResult ChangePassword(UserChangePasswordDto userChangePasswordDto)
         {
-            byte[] passwordHash, passwordSalt;
-            var userToCheck = _userService.GetByUserId(userChangePasswordDto.Id).Data;
+            var userToCheck = _userService.GetByUserId(userChangePasswordDto.UserId).Data;
             if (userToCheck == null)
             {
                 return new ErrorResult(Messages.UserNotFound);
             }
-            if (!HashingHelper.VerifyPasswordHashing(userChangePasswordDto.OldPassword, userToCheck.PasswordHash, userToCheck.PasswordSalt))
+
+            IDataResult<User> result = BusinessRules.Run<User>(VerifyPasswordHashing(userChangePasswordDto.OldPassword,
+                userToCheck.PasswordHash, userToCheck.PasswordSalt));
+
+            if (result != null)
             {
-                return new ErrorResult(Messages.PasswordError);
+                return result;
             }
+
+            byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(userChangePasswordDto.NewPassword, out passwordHash, out passwordSalt);
+
             userToCheck.PasswordHash = passwordHash;
             userToCheck.PasswordSalt = passwordSalt;
+
             _userService.UpdateUser(userToCheck);
             return new SuccessResult(Messages.PasswordChanged);
-        }
-
-        public IResult UserExists(string email)
-        {
-            if (_userService.GetByMail(email).Data != null)
-            {
-                return new ErrorResult(Messages.UserAlreadyExists);
-            }
-            return new SuccessResult();
         }
 
         public IDataResult<AccessToken> CreateAccessToken(User user)
@@ -109,6 +120,16 @@ namespace Business.Concrete
             var claims = _userService.GetClaims(user).Data;
             var accessToken = _tokenHelper.CreateToken(user, claims);
             return new SuccessDataResult<AccessToken>(accessToken, Messages.AccessTokenCreated);
+        }
+
+        //Business
+        private IDataResult<User> VerifyPasswordHashing(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            if (!HashingHelper.VerifyPasswordHashing(password, passwordHash, passwordSalt))
+            {
+                return new ErrorDataResult<User>(Messages.PasswordError);
+            }
+            return new SuccessDataResult<User>();
         }
     }
 }

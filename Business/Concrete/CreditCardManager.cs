@@ -41,10 +41,10 @@ namespace Business.Concrete
         [CacheAspect]
         public IDataResult<List<CreditCard>> GetByUserId(int id)
         {
-            var result = BusinessRules.Run(IsUserExists(id));
+            IDataResult<List<CreditCard>> result = BusinessRules.Run<List<CreditCard>>(IsUserExists(id));
             if (result != null)
             {
-                return (IDataResult<List<CreditCard>>) result;
+                return result;
             }
             return new SuccessDataResult<List<CreditCard>>(_creditCardDal.GetAll(p=>p.UserId == id));
         }
@@ -53,7 +53,7 @@ namespace Business.Concrete
         [CacheRemoveAspect("ICreditCardService.Get")]
         public IResult AddCreditCard(CreditCard creditCard)
         {
-            var result = BusinessRules.Run(IsUserExists(creditCard.UserId));
+            IResult result = BusinessRules.Run(IsUserExists(creditCard.UserId));
             if (result != null)
             {
                 return result;
@@ -66,7 +66,7 @@ namespace Business.Concrete
         [CacheRemoveAspect("ICreditCardService.Get")]
         public IResult UpdateCreditCard(CreditCard creditCard)
         {
-            var result = BusinessRules.Run(IsUserExists(creditCard.UserId));
+            IResult result = BusinessRules.Run(IsUserExists(creditCard.UserId));
             if (result != null)
             {
                 return result;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Business.Abstract;
+using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac;
 using Core.Entities.Concrete;
@@ -45,14 +46,14 @@ namespace Business.Concrete
         public IResult AddUser(User user)
         {
             _userDal.Add(user);
-            return new SuccessResult("User added successfully.");
+            return new SuccessResult(Messages.UserAdded);
 
         }
 
         public IResult UpdateUser(User user)
         {
             _userDal.Update(user);
-            return new SuccessResult("User updated successfully.");
+            return new SuccessResult(Messages.UserUpdated);
         }
 
         [ValidationAspect(typeof(UserInfosValidator))]
@@ -63,13 +64,13 @@ namespace Business.Concrete
             userToUpdate.LastName = user.LastName;
             userToUpdate.Email = user.Email;
             UpdateUser(userToUpdate);
-            return new SuccessResult("User updated successfully.");
+            return new SuccessResult(Messages.UserUpdated);
         }
 
         public IResult DeleteUser(User user)
         {
             _userDal.Delete(user);
-            return new SuccessResult("User deleted successfully.");
+            return new SuccessResult(Messages.UserDeleted);
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Business.Concrete
         public IResult Add(IFormFile file, UserProfilePhoto userProfilePhoto)
         {
 
-            var result = BusinessRules.Run(IsUserExists(userProfilePhoto.UserId));
+            IResult result = BusinessRules.Run(IsUserExists(userProfilePhoto.UserId));
             if (result != null)
             {
                 return result;

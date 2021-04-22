@@ -18,5 +18,17 @@ namespace Core.Utilities.Business
             }
             return null;
         }
+
+        public static IDataResult<T> Run<T>(params IResult[] logics)
+        {
+            foreach (var result in logics)
+            {
+                if (!result.Success)
+                {
+                    return (IDataResult<T>)result;
+                }
+            }
+            return null;
+        }
     }
 }

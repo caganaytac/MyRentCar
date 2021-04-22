@@ -74,6 +74,8 @@
         public static string UserProfilePhotoDeleted = "Your profile photo removed.";
         public static string UserProfilePhotoUpdated = "Your profile photo updated.";
         public static string UserProfilePhotoAdded = "Your profile photo added.";
-
+        public static string UserAdded = "User added successfully.";
+        public static string UserUpdated = "User added successfully.";
+        public static string UserDeleted = "User added successfully.";
     }
 }

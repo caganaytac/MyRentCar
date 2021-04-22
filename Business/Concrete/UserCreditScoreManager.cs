@@ -39,7 +39,7 @@ namespace Business.Concrete
 
         public IResult Add(UserCreditScore userCreditScore)
         {
-            var result = BusinessRules.Run(IsUserExists(userCreditScore.UserId));
+            IResult result = BusinessRules.Run(IsUserExists(userCreditScore.UserId));
             if (result != null)
             {
                 return result;

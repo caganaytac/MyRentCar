@@ -43,13 +43,12 @@ namespace WebAPI.Controllers
         [HttpPost("register")]
         public ActionResult Register(UserForRegisterDto userForRegisterDto)
         {
-            var userExists = _authService.UserExists(userForRegisterDto.Email);
-            if (!userExists.Success)
+            var registerResult = _authService.Register(userForRegisterDto);
+            if (!registerResult.Success)
             {
-                return BadRequest(userExists.Message);
+                return BadRequest(registerResult.Message);
             }
 
-            var registerResult = _authService.Register(userForRegisterDto);
             var result = _authService.CreateAccessToken(registerResult.Data);
             if (result.Success)
             {
@@ -57,7 +56,6 @@ namespace WebAPI.Controllers
             }
 
             return BadRequest(result.Message);
-
         }
 
         [HttpPost("change-password")]
