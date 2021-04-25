@@ -1,11 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
 using Business.Abstract;
-using Entities.Concrete;
 using Entities.DTOs;
 
 namespace WebAPI.Controllers
@@ -24,20 +18,19 @@ namespace WebAPI.Controllers
         [HttpPost("login")]
         public ActionResult Login(UserForLoginDto userForLoginDto)
         {
-            var userToLogin = _authService.Login(userForLoginDto);
-            if (!userToLogin.Success)
+            var loginResult = _authService.Login(userForLoginDto);
+            if (!loginResult.Success)
             {
-                return BadRequest(userToLogin.Message);
+                return BadRequest(loginResult);
             }
 
-            var result = _authService.CreateAccessToken(userToLogin.Data);
+            var result = _authService.CreateAccessToken(loginResult.Data);
             if (result.Success)
             {
                 return Ok(result);
             }
 
-            return BadRequest(result.Message);
-
+            return BadRequest(result);
         }
 
         [HttpPost("register")]
@@ -46,7 +39,7 @@ namespace WebAPI.Controllers
             var registerResult = _authService.Register(userForRegisterDto);
             if (!registerResult.Success)
             {
-                return BadRequest(registerResult.Message);
+                return BadRequest(registerResult);
             }
 
             var result = _authService.CreateAccessToken(registerResult.Data);
@@ -55,13 +48,12 @@ namespace WebAPI.Controllers
                 return Ok(result);
             }
 
-            return BadRequest(result.Message);
+            return BadRequest(result);
         }
 
         [HttpPost("change-password")]
         public ActionResult ChangePassword(UserChangePasswordDto userChangePasswordDto)
         {
-
             var result = _authService.ChangePassword(userChangePasswordDto);
             if (result.Success)
             {
@@ -69,7 +61,6 @@ namespace WebAPI.Controllers
             }
 
             return BadRequest(result.Message);
-
         }
     }
 }

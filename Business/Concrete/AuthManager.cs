@@ -115,13 +115,19 @@ namespace Business.Concrete
             return new SuccessResult(Messages.PasswordChanged);
         }
 
-        public IDataResult<AccessToken> CreateAccessToken(User user)
+        private IDataResult<AccessToken> MyCreateAccessToken(User user)
         {
             var claims = _userService.GetClaims(user).Data;
             var accessToken = _tokenHelper.CreateToken(user, claims);
             return new SuccessDataResult<AccessToken>(accessToken, Messages.AccessTokenCreated);
         }
 
+        public IDataResult<AccessToken> CreateAccessToken(User user)
+        {
+            var claims = _userService.GetClaims(user).Data;
+            var accessToken = _tokenHelper.CreateToken(user, claims);
+            return new SuccessDataResult<AccessToken>(accessToken, Messages.AccessTokenCreated);
+        }
         //Business
         private IDataResult<User> VerifyPasswordHashing(string password, byte[] passwordHash, byte[] passwordSalt)
         {
